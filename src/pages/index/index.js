@@ -4,6 +4,7 @@ import Foot from 'components/Foot.vue'
 import Vue from 'vue'
 import axios from 'axios'
 import url from 'js/api.js'
+import Swiper from 'components/Swiper.vue'
 import { InfiniteScroll } from 'mint-ui';
 Vue.use(InfiniteScroll);
 
@@ -15,13 +16,16 @@ new Vue({
     pageNum: 1,
     pageSize: 6,
     loading: false,
-    allLoaded: false
+    allLoaded: false,
+    bannerList: null
   },
   created() {
     this.getHotList()
+    this.getSwiperImage()
   },
   components: {
-    Foot
+    Foot,
+    Swiper
   },
   methods: {
     getHotList() {
@@ -31,7 +35,7 @@ new Vue({
           pageNum: this.pageNum,
           pageSize: this.pageSize
         }).then(res => {
-          let curList = JSON.parse(res.data).list
+          let curList = res.data.list
           if (this.hotList) {
             this.hotList = this.hotList.concat(curList)
           } else {
@@ -41,6 +45,11 @@ new Vue({
           this.loading = false
         })
       }
+    },
+    getSwiperImage() {
+      axios.post(url.indexBanner).then(res => {
+        this.bannerList = res.data.list
+      })
     }
   }
 })
